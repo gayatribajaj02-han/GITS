@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # MongoDB Database Service
+  mongodb:
+    image: mongo:latest
+    container_name: careerconnect_mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=careerconnect
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - careerconnect_net
+    restart: unless-stopped
+
+  # Express Backend API Service
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: careerconnect_server
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=development
+      - PORT=5000
+      - MONGODB_URI=mongodb://mongodb:27017/careerconnect
+      - JWT_SECRET=careerconnect_super_secret_jwt_key_2026_change_in_production
+      - CLIENT_URL=http://localhost:5173
+    depends_on:
+      - mongodb
+    networks:
+      - careerconnect_net
+    restart: unless-stopped
+
+  # Vite React Frontend Client Service
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: careerconnect_client
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:5000/api
+      - VITE_SOCKET_URL=http://localhost:5000
+    networks:
+      - careerconnect_net
+    depends_on:
+      - server
+    restart: unless-stopped
+
+volumes:
+  mongo_data:
+
+networks:
+  careerconnect_net:
+    driver: bridge

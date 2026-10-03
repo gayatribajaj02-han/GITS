@@ -1,0 +1,27 @@
+{
+  "name": "careerconnect",
+  "version": "1.0.0",
+  "description": "CareerConnect - Smart Student Placement & Skill Management Platform",
+  "main": "server/server.js",
+  "scripts": {
+    "setup": "npm install --prefix server && npm install --prefix client",
+    "dev:server": "npm run dev --prefix server",
+    "dev:client": "npm run dev --prefix client",
+    "seed": "npm run seed --prefix server",
+    "build": "npm run build --prefix client",
+    "start": "npm start --prefix server"
+  },
+  "keywords": [
+    "placement-portal",
+    "react",
+    "express",
+    "mongodb",
+    "skill-matching",
+    "socket.io",
+    "jwt",
+    "docker",
+    "fullstack"
+  ],
+  "author": "Antigravity Team",
+  "license": "MIT"
+}

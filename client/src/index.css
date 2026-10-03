@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-900 text-slate-100 font-sans antialiased;
+  }
+
+  /* Global Input Text Visibility Fix */
+  input, select, textarea {
+    color: #0f172a !important; /* dark slate-900 text */
+    font-weight: 500;
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: #94a3b8 !important; /* slate-400 placeholder */
+  }
+
+  /* Dark inputs override (for inputs residing inside dark containers like bg-slate-800/90) */
+  input.bg-slate-800,
+  input.bg-slate-900,
+  select.bg-slate-800,
+  select.bg-slate-900,
+  textarea.bg-slate-800,
+  textarea.bg-slate-900 {
+    color: #ffffff !important;
+  }
+
+  /* Light inputs explicit override */
+  input.bg-slate-50,
+  input.bg-white,
+  select.bg-slate-50,
+  select.bg-white,
+  textarea.bg-slate-50,
+  textarea.bg-white {
+    color: #0f172a !important;
+    background-color: #f8fafc;
+  }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}

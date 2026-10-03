@@ -1,0 +1,67 @@
+name: CareerConnect CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master, dev ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  backend-test:
+    name: Backend API & Service Tests
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install Server Dependencies
+        run: |
+          cd server
+          npm ci
+
+      - name: Verify Environment Variables
+        run: |
+          cd server
+          cp .env.example .env
+
+  frontend-build:
+    name: Frontend React Build & Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install Client Dependencies
+        run: |
+          cd client
+          npm ci
+
+      - name: Build Vite Application
+        run: |
+          cd client
+          npm run build
+        env:
+          VITE_API_URL: http://localhost:5000/api
+          VITE_SOCKET_URL: http://localhost:5000
