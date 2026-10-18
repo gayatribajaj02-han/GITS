@@ -45,6 +45,21 @@ const NotificationSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    // Multi-Channel Delivery Status (Email & WhatsApp)
+    emailNotification: {
+      sent: { type: Boolean, default: false },
+      recipientEmail: { type: String, default: '' },
+      subject: { type: String, default: '' },
+      previewUrl: { type: String, default: '' },
+      sentAt: { type: Date, default: null },
+    },
+    whatsappNotification: {
+      sent: { type: Boolean, default: false },
+      recipientPhone: { type: String, default: '' },
+      messageText: { type: String, default: '' },
+      waLink: { type: String, default: '' },
+      sentAt: { type: Date, default: null },
+    },
   },
   {
     timestamps: true,

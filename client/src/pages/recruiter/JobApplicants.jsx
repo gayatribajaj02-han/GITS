@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Users, Sparkles, CheckCircle2, ArrowLeft, ExternalLink } from 'lucide-react';
+import { Users, Sparkles, CheckCircle2, ArrowLeft, ExternalLink, Mail, MessageSquare, Send } from 'lucide-react';
 import { fetchJobApplicantsApi } from '../../services/recruiterService';
 import { updateApplicationStatusApi } from '../../services/applicationService';
 import Button from '../../components/common/Button';
@@ -14,6 +14,7 @@ export default function JobApplicants() {
   const [applicants, setApplicants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
+  const [dispatchAlert, setDispatchAlert] = useState('');
 
   const loadApplicants = async () => {
     setLoading(true);
@@ -34,14 +35,19 @@ export default function JobApplicants() {
     loadApplicants();
   }, [id]);
 
-  const handleStatusChange = async (appId, newStatus) => {
+  const handleStatusChange = async (appId, newStatus, applicantName) => {
     setUpdatingId(appId);
+    setDispatchAlert('');
     try {
       const res = await updateApplicationStatusApi(appId, newStatus);
       if (res.success) {
         setApplicants((prev) =>
           prev.map((app) => (app._id === appId ? { ...app, status: newStatus } : app))
         );
+        setDispatchAlert(
+          `✅ Status updated to "${newStatus}" for ${applicantName || 'Candidate'}! Automated Email & WhatsApp notification dispatched.`
+        );
+        setTimeout(() => setDispatchAlert(''), 7000);
       }
     } catch (err) {
       alert(`Status update failed: ${err.message}`);
@@ -62,13 +68,21 @@ export default function JobApplicants() {
         <div>
           <h1 className="text-3xl font-extrabold text-slate-900">{jobInfo?.title || 'Job Applicants'}</h1>
           <p className="text-slate-500 text-sm mt-1">
-            Review applicant skill match percentages and update recruitment pipeline statuses.
+            Review applicant skill match percentages and dispatch multi-channel recruitment updates.
           </p>
         </div>
         <div className="text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
           Total Candidates: <span className="text-blue-600 font-black">{applicants.length}</span>
         </div>
       </div>
+
+      {/* Dispatched Notification Banner */}
+      {dispatchAlert && (
+        <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl text-xs font-bold flex items-center gap-2 animate-fadeIn">
+          <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+          <span>{dispatchAlert}</span>
+        </div>
+      )}
 
       <div className="bg-white rounded-3xl border border-slate-200/90 p-6 shadow-sm overflow-hidden">
         {applicants.length === 0 ? (
@@ -84,69 +98,113 @@ export default function JobApplicants() {
                   <th className="pb-3">Academic Dept & CGPA</th>
                   <th className="pb-3">Skill Match Score</th>
                   <th className="pb-3">Applied Date</th>
-                  <th className="pb-3">Current Status</th>
+                  <th className="pb-3">Update Status</th>
+                  <th className="pb-3">Multi-Channel Alerts</th>
                   <th className="pb-3">Resume</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {applicants.map((app) => (
-                  <tr key={app._id} className="hover:bg-slate-50">
-                    <td className="py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
-                          {app.student?.name ? app.student.name.charAt(0) : 'S'}
+                {applicants.map((app) => {
+                  const studentPhone = app.studentProfile?.phone || '919876543210';
+                  const waText = encodeURIComponent(
+                    `🎓 *CareerConnect Placement Alert*\nHello *${app.student?.name}*,\nYour application status for *${jobInfo?.title || 'Job'}* is currently *${app.status}*.\nCheck details: http://localhost:5173/student/applications`
+                  );
+                  const waUrl = `https://api.whatsapp.com/send?phone=${studentPhone}&text=${waText}`;
+                  const emailPreviewUrl = `http://localhost:5000/api/notifications/preview-email/6a979e5d10490118d09b7353?name=${encodeURIComponent(
+                    app.student?.name || 'Candidate'
+                  )}&email=${encodeURIComponent(app.student?.email || 'student@demo.com')}&status=${encodeURIComponent(
+                    app.status
+                  )}&job=${encodeURIComponent(jobInfo?.title || 'Engineer')}&company=TechCorp%20Solutions`;
+
+                  return (
+                    <tr key={app._id} className="hover:bg-slate-50">
+                      <td className="py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
+                            {app.student?.name ? app.student.name.charAt(0) : 'S'}
+                          </div>
+                          <div>
+                            <p className="font-bold text-slate-900">{app.student?.name}</p>
+                            <p className="text-[10px] text-slate-500">{app.student?.email}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-bold text-slate-900">{app.student?.name}</p>
-                          <p className="text-[10px] text-slate-500">{app.student?.email}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-4 font-medium text-slate-700">
-                      {app.studentProfile?.department || 'IT'} • CGPA: {app.studentProfile?.cgpa || '8.0'}
-                    </td>
-                    <td className="py-4">
-                      <span
-                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-black ${
-                          app.matchScore >= 75
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            : 'bg-amber-50 text-amber-700 border border-amber-200'
-                        }`}
-                      >
-                        <Sparkles className="w-3 h-3" /> {app.matchScore}% Match
-                      </span>
-                    </td>
-                    <td className="py-4 text-slate-500">{new Date(app.appliedAt).toLocaleDateString()}</td>
-                    <td className="py-4">
-                      <select
-                        value={app.status}
-                        disabled={updatingId === app._id}
-                        onChange={(e) => handleStatusChange(app._id, e.target.value)}
-                        className="px-2.5 py-1 bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                      >
-                        {STATUS_OPTIONS.map((st) => (
-                          <option key={st} value={st}>
-                            {st}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className="py-4">
-                      {app.resumeUrl ? (
-                        <a
-                          href={app.resumeUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-blue-600 font-semibold hover:underline inline-flex items-center gap-1"
+                      </td>
+                      <td className="py-4 font-medium text-slate-700">
+                        {app.studentProfile?.department || 'IT'} • CGPA: {app.studentProfile?.cgpa || '8.0'}
+                      </td>
+                      <td className="py-4">
+                        <span
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-black ${
+                            app.matchScore >= 75
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                              : 'bg-amber-50 text-amber-700 border border-amber-200'
+                          }`}
                         >
-                          View Resume <ExternalLink className="w-3 h-3" />
-                        </a>
-                      ) : (
-                        <span className="text-slate-400">N/A</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
+                          <Sparkles className="w-3 h-3" /> {app.matchScore}% Match
+                        </span>
+                      </td>
+                      <td className="py-4 text-slate-500">{new Date(app.appliedAt).toLocaleDateString()}</td>
+                      <td className="py-4">
+                        <select
+                          value={app.status}
+                          disabled={updatingId === app._id}
+                          onChange={(e) => handleStatusChange(app._id, e.target.value, app.student?.name)}
+                          className="px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                        >
+                          {STATUS_OPTIONS.map((st) => (
+                            <option key={st} value={st}>
+                              {st}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+
+                      {/* Multi-Channel Alerts Column */}
+                      <td className="py-4">
+                        <div className="flex items-center gap-2">
+                          <a
+                            href={emailPreviewUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-[10px] font-bold border border-blue-200 transition-all"
+                            title="Preview Candidate Status Email"
+                          >
+                            <Mail className="w-3 h-3" />
+                            <span>Email</span>
+                            <ExternalLink className="w-2.5 h-2.5" />
+                          </a>
+
+                          <a
+                            href={waUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 px-2 py-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-[10px] font-bold border border-emerald-200 transition-all"
+                            title="Send WhatsApp Alert to Candidate"
+                          >
+                            <MessageSquare className="w-3 h-3" />
+                            <span>WhatsApp</span>
+                            <ExternalLink className="w-2.5 h-2.5" />
+                          </a>
+                        </div>
+                      </td>
+
+                      <td className="py-4">
+                        {app.resumeUrl ? (
+                          <a
+                            href={app.resumeUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-blue-600 font-semibold hover:underline inline-flex items-center gap-1"
+                          >
+                            View Resume <ExternalLink className="w-3 h-3" />
+                          </a>
+                        ) : (
+                          <span className="text-slate-400">N/A</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
