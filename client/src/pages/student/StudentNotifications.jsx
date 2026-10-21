@@ -214,7 +214,7 @@ export default function StudentNotifications() {
             const whatsappText = encodeURIComponent(`🎓 CareerConnect Placement Update: ${n.title} - ${n.message}`);
             const waLink =
               n.whatsappNotification?.waLink ||
-              `https://api.whatsapp.com/send?phone=919876543210&text=${whatsappText}`;
+              `https://wa.me/919876543210?text=${whatsappText}`;
 
             return (
               <div

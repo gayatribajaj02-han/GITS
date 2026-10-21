@@ -57,7 +57,8 @@ http://localhost:5173/student/applications
 
 _CareerConnect Training & Placement Cell_`;
 
-  const waLink = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(messageText)}`;
+  // Standard universal wa.me deep link
+  const waLink = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(messageText)}`;
 
   console.log(`💬 WhatsApp Notification generated for ${studentName} (${formattedPhone})`);
   console.log(`📱 WhatsApp Deep Link: ${waLink}`);

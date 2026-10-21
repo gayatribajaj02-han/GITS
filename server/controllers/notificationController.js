@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Notification = require('../models/Notification');
 const { successResponse, errorResponse } = require('../utils/apiResponse');
 const { sendApplicationStatusEmail } = require('../services/emailService');
@@ -80,15 +81,18 @@ const markAllAsRead = async (req, res, next) => {
  */
 const previewNotificationEmail = async (req, res, next) => {
   try {
-    const notification = await Notification.findById(req.params.id)
-      .populate('recipient', 'name email')
-      .populate('relatedJob', 'title company');
+    let notification = null;
+    if (req.params.id && req.params.id !== 'demo' && mongoose.Types.ObjectId.isValid(req.params.id)) {
+      notification = await Notification.findById(req.params.id)
+        .populate('recipient', 'name email')
+        .populate('relatedJob', 'title company');
+    }
 
     const recipientName = notification?.recipient?.name || req.query.name || 'Candidate';
     const recipientEmail = notification?.recipient?.email || req.query.email || 'candidate@student.demo';
     const jobTitle = notification?.relatedJob?.title || req.query.job || 'Software Engineer';
-    const companyName = req.query.company || 'TechCorp Solutions';
-    const status = req.query.status || 'Shortlisted';
+    const companyName = notification?.relatedJob?.company || req.query.company || 'TechCorp Solutions';
+    const status = req.query.status || (notification?.title?.includes('Selected') ? 'Selected' : notification?.title?.includes('Interview') ? 'Interview' : 'Shortlisted');
 
     const statusColors = {
       'Shortlisted': '#10b981',

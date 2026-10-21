@@ -109,7 +109,9 @@ export default function JobApplicants() {
                   const waText = encodeURIComponent(
                     `🎓 *CareerConnect Placement Alert*\nHello *${app.student?.name}*,\nYour application status for *${jobInfo?.title || 'Job'}* is currently *${app.status}*.\nCheck details: http://localhost:5173/student/applications`
                   );
-                  const waUrl = `https://api.whatsapp.com/send?phone=${studentPhone}&text=${waText}`;
+                  const cleanPhone = studentPhone.replace(/[^0-9]/g, '');
+                  const formattedPhone = cleanPhone.length === 10 ? '91' + cleanPhone : cleanPhone;
+                  const waUrl = `https://wa.me/${formattedPhone}?text=${waText}`;
                   const emailPreviewUrl = `http://localhost:5000/api/notifications/preview-email/6a979e5d10490118d09b7353?name=${encodeURIComponent(
                     app.student?.name || 'Candidate'
                   )}&email=${encodeURIComponent(app.student?.email || 'student@demo.com')}&status=${encodeURIComponent(
