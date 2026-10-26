@@ -11,3 +11,11 @@ export const registerUser = async (userData) => {
 export const fetchCurrentUser = async () => {
   return await api.get('/auth/me');
 };
+
+export const updateUserDetailsApi = async (details) => {
+  return await api.put('/auth/update-details', details);
+};
+
+export const updatePasswordApi = async (passwords) => {
+  return await api.put('/auth/update-password', passwords);
+};

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Briefcase, Sparkles, Target, Zap, ShieldCheck, ArrowRight, CheckCircle2, Key } from 'lucide-react';
+import { Briefcase, Sparkles, Target, Zap, ShieldCheck, ArrowRight, CheckCircle2 } from 'lucide-react';
 import Button from '../components/common/Button';
 
 export default function Home() {
@@ -34,31 +34,6 @@ export default function Home() {
                   Create Profile
                 </Button>
               </Link>
-            </div>
-
-            {/* Quick Demo Credentials Panel for Viva/Faculty Demonstration */}
-            <div className="mt-10 p-5 bg-white rounded-2xl border border-slate-200/90 shadow-md max-w-2xl mx-auto text-left space-y-3">
-              <div className="flex items-center gap-2 text-slate-900 font-bold text-sm border-b border-slate-100 pb-2">
-                <Key className="w-4 h-4 text-amber-500" />
-                Quick Demo Test Credentials (Click to Copy):
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-mono">
-                <div className="p-2 bg-slate-50 rounded-lg border border-slate-200">
-                  <span className="text-slate-400 block text-[10px] font-sans font-bold">STUDENT:</span>
-                  <span className="text-slate-800 font-bold">student@careerconnect.demo</span>
-                  <span className="text-slate-500 block">Pass: password123</span>
-                </div>
-                <div className="p-2 bg-slate-50 rounded-lg border border-slate-200">
-                  <span className="text-slate-400 block text-[10px] font-sans font-bold">RECRUITER:</span>
-                  <span className="text-slate-800 font-bold">recruiter@careerconnect.demo</span>
-                  <span className="text-slate-500 block">Pass: password123</span>
-                </div>
-                <div className="p-2 bg-slate-50 rounded-lg border border-slate-200">
-                  <span className="text-slate-400 block text-[10px] font-sans font-bold">ADMIN:</span>
-                  <span className="text-slate-800 font-bold">admin@careerconnect.demo</span>
-                  <span className="text-slate-500 block">Pass: password123</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>

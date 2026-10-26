@@ -49,7 +49,7 @@ export default function RecruiterDashboard() {
         <div className="flex gap-3">
           <Link to="/recruiter/company">
             <Button variant="secondary" size="md">
-              Edit Company Profile
+              Edit Profile & Settings
             </Button>
           </Link>
           <Link to="/recruiter/jobs/create">

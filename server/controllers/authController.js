@@ -149,8 +149,89 @@ const getMe = async (req, res, next) => {
   }
 };
 
+/**
+ * @desc    Update basic user details (Name, Phone, ProfileImage)
+ * @route   PUT /api/auth/update-details
+ * @access  Private
+ */
+const updateUserDetails = async (req, res, next) => {
+  try {
+    const { name, phone, profileImage } = req.body;
+
+    const fieldsToUpdate = {};
+    if (name) fieldsToUpdate.name = name;
+    if (phone !== undefined) fieldsToUpdate.phone = phone;
+    if (profileImage !== undefined) fieldsToUpdate.profileImage = profileImage;
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      fieldsToUpdate,
+      { new: true, runValidators: true }
+    );
+
+    return successResponse(res, 200, 'User details updated successfully', {
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        phone: user.phone,
+        profileImage: user.profileImage,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @desc    Change / update user password
+ * @route   PUT /api/auth/update-password
+ * @access  Private
+ */
+const updatePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return errorResponse(res, 400, 'Please provide both current password and new password');
+    }
+
+    if (newPassword.length < 6) {
+      return errorResponse(res, 400, 'New password must be at least 6 characters long');
+    }
+
+    // Get user with password field
+    const user = await User.findById(req.user.id).select('+password');
+    if (!user) {
+      return errorResponse(res, 404, 'User not found');
+    }
+
+    // Check current password
+    const isMatch = await user.matchPassword(currentPassword);
+    if (!isMatch) {
+      return errorResponse(res, 400, 'Current password does not match');
+    }
+
+    // Set new password
+    user.password = newPassword;
+    await user.save();
+
+    // Generate fresh auth token
+    const token = user.generateAuthToken();
+
+    return successResponse(res, 200, 'Password updated successfully', {
+      token,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   register,
   login,
   getMe,
+  updateUserDetails,
+  updatePassword,
 };

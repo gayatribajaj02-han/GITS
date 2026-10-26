@@ -53,7 +53,7 @@ ${status === 'Selected' ? '🎉 Congratulations! The T&P cell will send your off
   'Your application is under evaluation by the hiring panel.'}
 
 👉 *View Details on Student Portal:*
-http://localhost:5173/student/applications
+${process.env.CLIENT_URL || 'https://careerconnect-484v9qnqo-gayatri-bajaj.vercel.app'}/student/applications
 
 _CareerConnect Training & Placement Cell_`;
 

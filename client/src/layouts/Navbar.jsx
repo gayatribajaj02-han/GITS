@@ -116,7 +116,7 @@ export default function Navbar() {
                           : 'text-slate-600 hover:text-slate-900'
                       }`}
                     >
-                      Company Profile
+                      Profile & Settings
                     </Link>
                     <Link
                       to="/recruiter/jobs/create"
@@ -268,7 +268,7 @@ export default function Navbar() {
                     onClick={() => setMobileMenuOpen(false)}
                     className="block py-2 text-sm text-slate-700"
                   >
-                    Company Profile
+                    Profile & Settings
                   </Link>
                   <Link
                     to="/recruiter/jobs/create"

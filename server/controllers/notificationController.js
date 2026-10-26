@@ -153,7 +153,7 @@ const previewNotificationEmail = async (req, res, next) => {
                 'Your application has been received and is currently under review by the hiring team.'}
             </p>
             <center>
-              <a href="http://localhost:5173/student/applications" class="btn">View on Student Dashboard</a>
+              <a href="${process.env.CLIENT_URL || 'https://careerconnect-484v9qnqo-gayatri-bajaj.vercel.app'}/student/applications" class="btn">View on Student Dashboard</a>
             </center>
           </div>
           <div class="footer">

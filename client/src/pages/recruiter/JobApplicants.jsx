@@ -5,6 +5,7 @@ import { fetchJobApplicantsApi } from '../../services/recruiterService';
 import { updateApplicationStatusApi } from '../../services/applicationService';
 import Button from '../../components/common/Button';
 import Badge from '../../components/common/Badge';
+import EmailPreviewModal from '../../components/common/EmailPreviewModal';
 
 const STATUS_OPTIONS = ['Applied', 'Under Review', 'Shortlisted', 'Interview', 'Selected', 'Rejected'];
 
@@ -15,6 +16,9 @@ export default function JobApplicants() {
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
   const [dispatchAlert, setDispatchAlert] = useState('');
+  const [emailModal, setEmailModal] = useState({ isOpen: false, data: null });
+
+  const apiBase = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/api\/?$/, '');
 
   const loadApplicants = async () => {
     setLoading(true);
@@ -107,12 +111,12 @@ export default function JobApplicants() {
                 {applicants.map((app) => {
                   const studentPhone = app.studentProfile?.phone || '919876543210';
                   const waText = encodeURIComponent(
-                    `🎓 *CareerConnect Placement Alert*\nHello *${app.student?.name}*,\nYour application status for *${jobInfo?.title || 'Job'}* is currently *${app.status}*.\nCheck details: http://localhost:5173/student/applications`
+                    `🎓 *CareerConnect Placement Alert*\nHello *${app.student?.name}*,\nYour application status for *${jobInfo?.title || 'Job'}* is currently *${app.status}*.\nCheck details: ${window.location.origin}/student/applications`
                   );
                   const cleanPhone = studentPhone.replace(/[^0-9]/g, '');
                   const formattedPhone = cleanPhone.length === 10 ? '91' + cleanPhone : cleanPhone;
                   const waUrl = `https://wa.me/${formattedPhone}?text=${waText}`;
-                  const emailPreviewUrl = `http://localhost:5000/api/notifications/preview-email/6a979e5d10490118d09b7353?name=${encodeURIComponent(
+                  const emailPreviewUrl = `${apiBase}/api/notifications/preview-email/demo?name=${encodeURIComponent(
                     app.student?.name || 'Candidate'
                   )}&email=${encodeURIComponent(app.student?.email || 'student@demo.com')}&status=${encodeURIComponent(
                     app.status
@@ -164,17 +168,27 @@ export default function JobApplicants() {
                       {/* Multi-Channel Alerts Column */}
                       <td className="py-4">
                         <div className="flex items-center gap-2">
-                          <a
-                            href={emailPreviewUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-[10px] font-bold border border-blue-200 transition-all"
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setEmailModal({
+                                isOpen: true,
+                                data: {
+                                  recipientName: app.student?.name || 'Candidate',
+                                  recipientEmail: app.student?.email || 'student@demo.com',
+                                  jobTitle: jobInfo?.title || 'Engineer',
+                                  companyName: 'TechCorp Solutions',
+                                  status: app.status,
+                                },
+                              })
+                            }
+                            className="inline-flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-[10px] font-bold border border-blue-200 transition-all cursor-pointer"
                             title="Preview Candidate Status Email"
                           >
                             <Mail className="w-3 h-3" />
                             <span>Email</span>
                             <ExternalLink className="w-2.5 h-2.5" />
-                          </a>
+                          </button>
 
                           <a
                             href={waUrl}
@@ -212,6 +226,12 @@ export default function JobApplicants() {
           </div>
         )}
       </div>
+
+      <EmailPreviewModal
+        isOpen={emailModal.isOpen}
+        onClose={() => setEmailModal({ isOpen: false, data: null })}
+        data={emailModal.data}
+      />
     </div>
   );
 }
