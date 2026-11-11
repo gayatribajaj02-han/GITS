@@ -117,8 +117,8 @@ export default function JobApplicants() {
                   const formattedPhone = cleanPhone.length === 10 ? '91' + cleanPhone : cleanPhone;
                   const waUrl = `https://wa.me/${formattedPhone}?text=${waText}`;
                   const emailPreviewUrl = `${apiBase}/api/notifications/preview-email/demo?name=${encodeURIComponent(
-                    app.student?.name || 'Candidate'
-                  )}&email=${encodeURIComponent(app.student?.email || 'student@demo.com')}&status=${encodeURIComponent(
+                    app.student?.name || 'Gayatri Bajaj'
+                  )}&email=${encodeURIComponent(app.student?.email || 'gayatribajaj02@gmail.com')}&status=${encodeURIComponent(
                     app.status
                   )}&job=${encodeURIComponent(jobInfo?.title || 'Engineer')}&company=TechCorp%20Solutions`;
 
@@ -173,8 +173,8 @@ export default function JobApplicants() {
                               setEmailModal({
                                 isOpen: true,
                                 data: {
-                                  recipientName: app.student?.name || 'Candidate',
-                                  recipientEmail: app.student?.email || 'student@demo.com',
+                                  recipientName: app.student?.name || 'Gayatri Bajaj',
+                                  recipientEmail: app.student?.email || 'gayatribajaj02@gmail.com',
                                   jobTitle: jobInfo?.title || 'Engineer',
                                   companyName: 'TechCorp Solutions',
                                   status: app.status,

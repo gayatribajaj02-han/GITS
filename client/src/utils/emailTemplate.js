@@ -3,8 +3,8 @@
  * Can be rendered directly in-browser via Blob URL or modal
  */
 export const generateEmailHtml = ({
-  recipientName = 'Candidate',
-  recipientEmail = 'student@careerconnect.demo',
+  recipientName = 'Gayatri Bajaj',
+  recipientEmail = 'gayatribajaj02@gmail.com',
   jobTitle = 'Full Stack Software Engineer',
   companyName = 'TechCorp Solutions',
   status = 'Shortlisted',

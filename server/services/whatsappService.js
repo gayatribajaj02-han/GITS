@@ -19,7 +19,7 @@ const formatPhoneNumber = (phone) => {
  * Send / Prepare WhatsApp Notification for Candidate Status Update
  */
 const sendWhatsAppStatusNotification = async ({
-  studentName = 'Candidate',
+  studentName = 'Gayatri Bajaj',
   studentPhone = '8983398247',
   jobTitle,
   companyName,

@@ -6,8 +6,8 @@ export default function EmailPreviewModal({ isOpen, onClose, data }) {
   if (!isOpen || !data) return null;
 
   const {
-    recipientName = 'Candidate',
-    recipientEmail = 'student@careerconnect.demo',
+    recipientName = 'Gayatri Bajaj',
+    recipientEmail = 'gayatribajaj02@gmail.com',
     jobTitle = 'Full Stack Software Engineer',
     companyName = 'TechCorp Solutions',
     status = 'Shortlisted',

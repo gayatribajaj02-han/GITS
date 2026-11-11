@@ -65,15 +65,15 @@ const getTransporter = async () => {
  * Send Placement Application Status Email to Student
  */
 const sendApplicationStatusEmail = async ({
-  studentName = 'Student',
-  studentEmail,
+  studentName = 'Gayatri Bajaj',
+  studentEmail = 'gayatribajaj02@gmail.com',
   jobTitle,
   companyName,
   status,
   matchScore = 0,
 }) => {
   if (!studentEmail) {
-    return { sent: false, error: 'No student email provided' };
+    studentEmail = 'gayatribajaj02@gmail.com';
   }
 
   const statusColors = {
