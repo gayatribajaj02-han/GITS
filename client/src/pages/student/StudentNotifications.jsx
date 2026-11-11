@@ -27,6 +27,7 @@ export default function StudentNotifications() {
   const [testStatus, setTestStatus] = useState('Shortlisted');
   const [sendingTest, setSendingTest] = useState(false);
   const [testResult, setTestResult] = useState(null);
+  const [customNotifications, setCustomNotifications] = useState([]);
 
   // Email Preview Modal State
   const [emailModal, setEmailModal] = useState({ isOpen: false, data: null });
@@ -88,17 +89,35 @@ _CareerConnect Training & Placement Cell_`;
       status: testStatus,
     };
 
+    // Instant UI feedback: Set result immediately so UI responds in 0ms
+    setTestResult(immediateResult);
+
+    const newNotificationItem = {
+      _id: 'live-test-' + Date.now(),
+      title: `${statusEmoji[testStatus] || testStatus}: Full Stack Software Engineer`,
+      message: `Application update for Gayatri Bajaj at TechCorp Solutions. Evaluated status: ${testStatus}. Skill match: 92%.`,
+      createdAt: new Date().toISOString(),
+      isRead: false,
+      recipient: { name: 'Gayatri Bajaj', email: testEmail },
+      relatedJob: { title: 'Full Stack Software Engineer', company: 'TechCorp Solutions' },
+      whatsappNotification: {
+        recipientPhone: formattedPhone,
+        waLink: liveWaLink,
+      },
+    };
+    setCustomNotifications((prev) => [newNotificationItem, ...prev]);
+
     try {
       const res = await sendTestAlertApi({
         email: testEmail,
-        phone: testPhone,
+        phone: formattedPhone,
         name: candidateName,
         jobTitle: 'Full Stack Software Engineer',
         companyName: 'TechCorp Solutions',
         status: testStatus,
       });
 
-      if (res.success && res.data) {
+      if (res && res.success && res.data) {
         setTestResult({
           ...immediateResult,
           ...res.data,
@@ -109,12 +128,9 @@ _CareerConnect Training & Placement Cell_`;
           },
         });
         if (refreshNotifications) refreshNotifications();
-      } else {
-        setTestResult(immediateResult);
       }
     } catch (err) {
       console.warn('Backend API notification sync notice:', err.message);
-      setTestResult(immediateResult);
     } finally {
       setSendingTest(false);
     }
@@ -226,7 +242,6 @@ _CareerConnect Training & Placement Cell_`;
             <div className="sm:col-span-3 pt-2 flex items-center justify-end">
               <button
                 type="submit"
-                onClick={handleSendTestNotification}
                 disabled={sendingTest}
                 className="inline-flex items-center justify-center font-bold transition-all duration-200 px-4 py-2.5 text-xs rounded-xl bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/30 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
               >
@@ -321,14 +336,18 @@ _CareerConnect Training & Placement Cell_`;
             },
           ];
 
-          const list = notifications && notifications.length > 0 ? notifications : defaultDemoNotifications;
+          const baseList = notifications && notifications.length > 0 ? notifications : defaultDemoNotifications;
+          const list = [...customNotifications, ...baseList];
 
           return list.map((n) => {
             const emailPreviewUrl = `${apiBase}/api/notifications/preview-email/${n._id}`;
             const whatsappText = encodeURIComponent(`🎓 CareerConnect Placement Update: ${n.title} - ${n.message}`);
-            const waLink =
-              n.whatsappNotification?.waLink ||
-              `https://wa.me/918983398247?text=${whatsappText}`;
+            let waLink = n.whatsappNotification?.waLink || `https://wa.me/918983398247?text=${whatsappText}`;
+            if (waLink.includes('9876543210') || !waLink.includes('918983398247')) {
+              waLink = `https://wa.me/918983398247?text=${encodeURIComponent(
+                `🎓 *CareerConnect Placement Alert*\n---------------------------------\nDear *Gayatri Bajaj*,\n\n${n.title}\n${n.message}\n\n👉 *View Details on Student Portal:*\n${window.location.origin}/student/applications\n\n_CareerConnect Training & Placement Cell_`
+              )}`;
+            }
 
             return (
               <div

@@ -110,10 +110,10 @@ export default function Login() {
             <div className="grid grid-cols-3 gap-2 text-xs">
               <button
                 type="button"
-                onClick={() => handleDemoLogin('student@careerconnect.demo', 'student')}
+                onClick={() => handleDemoLogin('gayatribajaj02@gmail.com', 'student')}
                 className="px-2 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg font-medium transition-colors"
               >
-                Student Demo
+                Student (Gayatri)
               </button>
               <button
                 type="button"
