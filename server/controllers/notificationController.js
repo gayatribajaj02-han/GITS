@@ -148,9 +148,9 @@ const previewNotificationEmail = async (req, res, next) => {
             </div>
             <p style="color: #cbd5e1; font-size: 14px; line-height: 1.6;">
               ${status === 'Selected' ? '🎉 <strong>Congratulations!</strong> You have been selected for this position. The T&P cell will send your offer letter and joining kit shortly.' :
-                status === 'Interview' ? '📅 Your interview round has been scheduled. Please check your student dashboard for meet links and time slots.' :
-                status === 'Shortlisted' ? '🌟 Great job! Your technical profile met company benchmarks and you have been shortlisted for the next evaluation round.' :
-                'Your application has been received and is currently under review by the hiring team.'}
+        status === 'Interview' ? '📅 Your interview round has been scheduled. Please check your student dashboard for meet links and time slots.' :
+          status === 'Shortlisted' ? '🌟 Great job! Your technical profile met company benchmarks and you have been shortlisted for the next evaluation round.' :
+            'Your application has been received and is currently under review by the hiring team.'}
             </p>
             <center>
               <a href="${process.env.CLIENT_URL || 'https://careerconnect-484v9qnqo-gayatri-bajaj.vercel.app'}/student/applications" class="btn">View on Student Dashboard</a>
@@ -177,11 +177,12 @@ const previewNotificationEmail = async (req, res, next) => {
  * @route   POST /api/notifications/send-test-alert
  * @access  Private / Public
  */
+
 const sendTestAlert = async (req, res, next) => {
   try {
     const {
       email = 'student@careerconnect.demo',
-      phone = '9876543210',
+      phone = '8983398247',
       name = 'Rahul Sharma',
       jobTitle = 'Full Stack Software Engineer',
       companyName = 'TechCorp Solutions',
@@ -206,19 +207,28 @@ const sendTestAlert = async (req, res, next) => {
       matchScore: 85,
     });
 
-    return successResponse(res, 200, 'Test Email and WhatsApp notification dispatched successfully!', {
-      emailResult,
-      whatsappResult,
-    });
+    if (!emailResult.sent) {
+      return res.status(500).json({
+        success: false,
+        message: 'Email could not be sent. Check your SMTP configuration.',
+        data: {
+          emailResult,
+          whatsappResult,
+        },
+      });
+    }
+
+    return successResponse(
+      res,
+      200,
+      'Email processed successfully. Open WhatsApp to send the message manually.',
+      {
+        emailResult,
+        whatsappResult,
+      }
+    );
   } catch (error) {
     next(error);
   }
 };
 
-module.exports = {
-  getNotifications,
-  markAsRead,
-  markAllAsRead,
-  previewNotificationEmail,
-  sendTestAlert,
-};

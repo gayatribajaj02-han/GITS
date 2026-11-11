@@ -131,9 +131,9 @@ const sendApplicationStatusEmail = async ({
           </div>
           <p style="color: #cbd5e1; font-size: 13px; line-height: 1.6;">
             ${status === 'Selected' ? '🎉 <strong>Congratulations!</strong> You have been selected for this position. The placement cell will contact you shortly with your offer letter.' :
-              status === 'Interview' ? '📅 Your interview has been scheduled. Please check your dashboard for round details and interview links.' :
-              status === 'Shortlisted' ? '🌟 Great job! Your profile matched company requirements and you have been shortlisted for the next evaluation round.' :
-              'Your profile is currently under review by the corporate hiring team.'}
+      status === 'Interview' ? '📅 Your interview has been scheduled. Please check your dashboard for round details and interview links.' :
+        status === 'Shortlisted' ? '🌟 Great job! Your profile matched company requirements and you have been shortlisted for the next evaluation round.' :
+          'Your profile is currently under review by the corporate hiring team.'}
           </p>
           <center>
             <a href="http://localhost:5173/student/applications" class="btn">View Application on Dashboard</a>
@@ -151,7 +151,7 @@ const sendApplicationStatusEmail = async ({
   try {
     const transporter = await getTransporter();
     const fromAddress = process.env.SMTP_USER || '"CareerConnect Placement Office" <placement@careerconnect.demo>';
-    
+
     const mailOptions = {
       from: fromAddress,
       to: studentEmail,
@@ -172,16 +172,19 @@ const sendApplicationStatusEmail = async ({
       previewUrl: testUrl,
       sentAt: new Date(),
     };
+
   } catch (error) {
     console.error('❌ Email sending error:', error.message);
+
     return {
-      sent: true,
+      sent: false,
       recipientEmail: studentEmail,
       subject,
-      previewUrl: `http://localhost:5000/api/notifications/preview-email?email=${encodeURIComponent(studentEmail)}&status=${encodeURIComponent(status)}&job=${encodeURIComponent(jobTitle)}&company=${encodeURIComponent(companyName)}`,
+      error: error.message,
       sentAt: new Date(),
     };
   }
+
 };
 
 module.exports = {

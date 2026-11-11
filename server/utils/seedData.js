@@ -31,7 +31,7 @@ const seedDatabase = async () => {
       email: 'admin@careerconnect.demo',
       password: 'password123',
       role: 'admin',
-      phone: '+91 9876543210',
+      phone: '+91 8983398247',
     });
 
     // 2. Create Recruiters
@@ -40,7 +40,7 @@ const seedDatabase = async () => {
       email: 'recruiter@careerconnect.demo',
       password: 'password123',
       role: 'recruiter',
-      phone: '+91 9876543211',
+      phone: '+91 8983398247',
     });
 
     const recruiter2 = await User.create({
@@ -48,7 +48,7 @@ const seedDatabase = async () => {
       email: 'vikram.recruiter@techcorp.demo',
       password: 'password123',
       role: 'recruiter',
-      phone: '+91 9876543212',
+      phone: '+91 8983398247',
     });
 
     const recruiter3 = await User.create({
@@ -56,7 +56,7 @@ const seedDatabase = async () => {
       email: 'sara.recruiter@cloudworks.demo',
       password: 'password123',
       role: 'recruiter',
-      phone: '+91 9876543213',
+      phone: '+91 8983398247',
     });
 
     // 3. Create Companies

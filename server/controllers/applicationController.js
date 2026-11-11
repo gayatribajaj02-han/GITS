@@ -116,7 +116,7 @@ const applyForJob = async (req, res, next) => {
 
       const waResult = await sendWhatsAppStatusNotification({
         studentName: req.user.name,
-        studentPhone: studentProfile.phone || '9876543210',
+        studentPhone: studentProfile.phone || '8983398247',
         jobTitle: job.title,
         companyName: job.company?.name || 'Partner Company',
         status: 'Applied',
@@ -254,7 +254,7 @@ const updateApplicationStatus = async (req, res, next) => {
       // 💬 Generate WhatsApp Notification & Deep Link
       whatsappResult = await sendWhatsAppStatusNotification({
         studentName: application.student.name,
-        studentPhone: studentProfile?.phone || '9876543210',
+        studentPhone: studentProfile?.phone || '8983398247',
         jobTitle: application.job.title,
         companyName: application.job.company?.name || 'Partner Company',
         status,

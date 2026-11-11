@@ -158,11 +158,10 @@ export default function RecruiterCompany() {
       <div className="flex border-b border-slate-700 space-x-2">
         <button
           onClick={() => setActiveTab('details')}
-          className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-t-xl transition-all border-b-2 ${
-            activeTab === 'details'
+          className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-t-xl transition-all border-b-2 ${activeTab === 'details'
               ? 'border-blue-500 text-blue-400 bg-slate-800/60'
               : 'border-transparent text-slate-400 hover:text-slate-200'
-          }`}
+            }`}
         >
           <User className="w-4 h-4" />
           <span>Basic Details (Phone & Name)</span>
@@ -170,11 +169,10 @@ export default function RecruiterCompany() {
 
         <button
           onClick={() => setActiveTab('security')}
-          className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-t-xl transition-all border-b-2 ${
-            activeTab === 'security'
+          className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-t-xl transition-all border-b-2 ${activeTab === 'security'
               ? 'border-blue-500 text-blue-400 bg-slate-800/60'
               : 'border-transparent text-slate-400 hover:text-slate-200'
-          }`}
+            }`}
         >
           <Lock className="w-4 h-4" />
           <span>Change Password</span>
@@ -182,11 +180,10 @@ export default function RecruiterCompany() {
 
         <button
           onClick={() => setActiveTab('company')}
-          className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-t-xl transition-all border-b-2 ${
-            activeTab === 'company'
+          className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-t-xl transition-all border-b-2 ${activeTab === 'company'
               ? 'border-blue-500 text-blue-400 bg-slate-800/60'
               : 'border-transparent text-slate-400 hover:text-slate-200'
-          }`}
+            }`}
         >
           <Building2 className="w-4 h-4" />
           <span>Company Profile</span>
@@ -208,11 +205,10 @@ export default function RecruiterCompany() {
 
           {detailsMessage.text && (
             <div
-              className={`p-4 rounded-2xl text-xs flex items-center gap-2 font-semibold ${
-                detailsMessage.type === 'success'
+              className={`p-4 rounded-2xl text-xs flex items-center gap-2 font-semibold ${detailsMessage.type === 'success'
                   ? 'bg-emerald-950/40 border border-emerald-500/40 text-emerald-300'
                   : 'bg-rose-950/40 border border-rose-500/40 text-rose-300'
-              }`}
+                }`}
             >
               {detailsMessage.type === 'success' ? (
                 <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-400" />
@@ -250,7 +246,7 @@ export default function RecruiterCompany() {
                     value={userDetails.phone}
                     onChange={(e) => setUserDetails({ ...userDetails, phone: e.target.value })}
                     className="w-full pl-10 pr-3.5 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white font-medium focus:outline-none focus:border-blue-500"
-                    placeholder="e.g. +91 9876543210"
+                    placeholder="e.g. +91 8983398247"
                   />
                 </div>
                 <span className="text-[11px] text-slate-400 mt-1 block">
@@ -299,11 +295,10 @@ export default function RecruiterCompany() {
 
           {passwordMessage.text && (
             <div
-              className={`p-4 rounded-2xl text-xs flex items-center gap-2 font-semibold ${
-                passwordMessage.type === 'success'
+              className={`p-4 rounded-2xl text-xs flex items-center gap-2 font-semibold ${passwordMessage.type === 'success'
                   ? 'bg-emerald-950/40 border border-emerald-500/40 text-emerald-300'
                   : 'bg-rose-950/40 border border-rose-500/40 text-rose-300'
-              }`}
+                }`}
             >
               {passwordMessage.type === 'success' ? (
                 <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-400" />
@@ -377,11 +372,10 @@ export default function RecruiterCompany() {
 
           {companyMessage.text && (
             <div
-              className={`p-4 rounded-2xl text-xs flex items-center gap-2 font-semibold ${
-                companyMessage.type === 'success'
+              className={`p-4 rounded-2xl text-xs flex items-center gap-2 font-semibold ${companyMessage.type === 'success'
                   ? 'bg-emerald-950/40 border border-emerald-500/40 text-emerald-300'
                   : 'bg-rose-950/40 border border-rose-500/40 text-rose-300'
-              }`}
+                }`}
             >
               {companyMessage.type === 'success' ? (
                 <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-400" />

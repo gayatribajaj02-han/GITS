@@ -7,12 +7,12 @@
  * Format phone number to international WhatsApp standard
  */
 const formatPhoneNumber = (phone) => {
-  if (!phone) return '919876543210';
-  let cleaned = phone.replace(/[^0-9]/g, '');
+  if (!phone) return '918983398247';
+  let cleaned = String(phone).replace(/[^0-9]/g, '');
   if (cleaned.length === 10) {
     cleaned = '91' + cleaned; // Default country code India (+91)
   }
-  return cleaned;
+  return cleaned || '918983398247';
 };
 
 /**
@@ -20,7 +20,7 @@ const formatPhoneNumber = (phone) => {
  */
 const sendWhatsAppStatusNotification = async ({
   studentName = 'Candidate',
-  studentPhone = '9876543210',
+  studentPhone = '8983398247',
   jobTitle,
   companyName,
   status,
@@ -48,9 +48,9 @@ Your application status has been updated:
 🎯 *Skill Match Score:* ${matchScore}%
 
 ${status === 'Selected' ? '🎉 Congratulations! The T&P cell will send your offer letter shortly.' :
-  status === 'Interview' ? '📅 Please be prepared for your upcoming interview round.' :
-  status === 'Shortlisted' ? '🌟 Great work! You have progressed to the next round.' :
-  'Your application is under evaluation by the hiring panel.'}
+      status === 'Interview' ? '📅 Please be prepared for your upcoming interview round.' :
+        status === 'Shortlisted' ? '🌟 Great work! You have progressed to the next round.' :
+          'Your application is under evaluation by the hiring panel.'}
 
 👉 *View Details on Student Portal:*
 ${process.env.CLIENT_URL || 'https://careerconnect-484v9qnqo-gayatri-bajaj.vercel.app'}/student/applications
@@ -63,8 +63,10 @@ _CareerConnect Training & Placement Cell_`;
   console.log(`💬 WhatsApp Notification generated for ${studentName} (${formattedPhone})`);
   console.log(`📱 WhatsApp Deep Link: ${waLink}`);
 
+
   return {
-    sent: true,
+    sent: false,
+    linkReady: true,
     recipientPhone: formattedPhone,
     messageText,
     waLink,

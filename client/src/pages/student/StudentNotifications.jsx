@@ -23,7 +23,7 @@ export default function StudentNotifications() {
   // Test notification modal/form states
   const [showTestForm, setShowTestForm] = useState(false);
   const [testEmail, setTestEmail] = useState('student@careerconnect.demo');
-  const [testPhone, setTestPhone] = useState('9876543210');
+  const [testPhone, setTestPhone] = useState('8983398247');
   const [testStatus, setTestStatus] = useState('Shortlisted');
   const [sendingTest, setSendingTest] = useState(false);
   const [testResult, setTestResult] = useState(null);
@@ -38,8 +38,8 @@ export default function StudentNotifications() {
     setSendingTest(true);
     setTestResult(null);
 
-    const cleanPhone = testPhone.replace(/[^0-9]/g, '');
-    const formattedPhone = cleanPhone.length === 10 ? '91' + cleanPhone : cleanPhone || '919876543210';
+    const cleanPhone = String(testPhone).replace(/[^0-9]/g, '');
+    const formattedPhone = cleanPhone.length === 10 ? '91' + cleanPhone : (cleanPhone.startsWith('91') && cleanPhone.length === 12 ? cleanPhone : '918983398247');
 
     const statusEmoji = {
       'Shortlisted': '🌟 SHORTLISTED',
@@ -60,9 +60,9 @@ Your application status has been updated:
 🎯 *Skill Match Score:* 85%
 
 ${testStatus === 'Selected' ? '🎉 Congratulations! The T&P cell will send your offer letter shortly.' :
-  testStatus === 'Interview' ? '📅 Please be prepared for your upcoming interview round.' :
-  testStatus === 'Shortlisted' ? '🌟 Great work! You have progressed to the next round.' :
-  'Your application is under evaluation by the hiring panel.'}
+        testStatus === 'Interview' ? '📅 Please be prepared for your upcoming interview round.' :
+          testStatus === 'Shortlisted' ? '🌟 Great work! You have progressed to the next round.' :
+            'Your application is under evaluation by the hiring panel.'}
 
 👉 *View Details on Student Portal:*
 ${window.location.origin}/student/applications
@@ -87,25 +87,21 @@ _CareerConnect Training & Placement Cell_`;
       } else {
         throw new Error('API dispatch failed');
       }
+
     } catch (err) {
-      // Graceful instant fallback so evaluation works 100% reliably even offline or on cold start
       setTestResult({
-        emailResult: {
-          sent: true,
-          recipientEmail: testEmail,
-          previewUrl: `${apiBase}/api/notifications/preview-email/demo?name=Rahul%20Sharma&email=${encodeURIComponent(testEmail)}&status=${encodeURIComponent(testStatus)}&job=Full%20Stack%20Software%20Engineer&company=TechCorp%20Solutions`,
-        },
-        whatsappResult: {
-          sent: true,
-          recipientPhone: formattedPhone,
-          waLink: fallbackWaLink,
-        },
+        error:
+          err.response?.data?.message ||
+          err.message ||
+          'Notification request failed. Please check the backend.',
       });
+
     } finally {
       setSendingTest(false);
     }
-  };
+  }; // Close handleSendTestNotification here
 
+  // Email preview function belongs at component level
   const openEmailPreview = (data) => {
     setEmailModal({
       isOpen: true,
@@ -113,7 +109,9 @@ _CareerConnect Training & Placement Cell_`;
     });
   };
 
+  // Main component JSX starts here
   return (
+
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
@@ -188,7 +186,7 @@ _CareerConnect Training & Placement Cell_`;
                 onChange={(e) => setTestPhone(e.target.value)}
                 required
                 className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-xl text-xs text-white focus:outline-none focus:border-blue-500"
-                placeholder="9876543210"
+                placeholder="8983398247"
               />
             </div>
 
@@ -219,8 +217,14 @@ _CareerConnect Training & Placement Cell_`;
             </div>
           </form>
 
+          {testResult?.error && (
+            <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-600">
+              {testResult.error}
+            </div>
+          )}
+
           {/* Test Results Banner */}
-          {testResult && (
+          {testResult && !testResult.error && (
             <div className="p-4 bg-slate-800/90 rounded-2xl border border-emerald-500/40 space-y-3 mt-4">
               <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs">
                 <CheckCircle2 className="w-4 h-4" />
@@ -248,16 +252,19 @@ _CareerConnect Training & Placement Cell_`;
                 </button>
 
                 {/* WhatsApp Chat Link */}
-                <a
-                  href={testResult.whatsappResult?.waLink}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-500 transition-all shadow-md shadow-emerald-600/20"
-                >
-                  <MessageSquare className="w-3.5 h-3.5" />
-                  <span>💬 Open WhatsApp Alert (wa.me)</span>
-                  <ExternalLink className="w-3 h-3 ml-1" />
-                </a>
+
+                {testResult.whatsappResult?.linkReady && (
+                  <a
+                    href={testResult.whatsappResult.waLink}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-500 transition-all shadow-md shadow-emerald-600/20"
+                  >
+                    <MessageSquare className="w-3.5 h-3.5" />
+                    <span>💬 Open WhatsApp Alert (wa.me)</span>
+                    <ExternalLink className="w-3 h-3 ml-1" />
+                  </a>
+                )}
               </div>
             </div>
           )}
@@ -266,26 +273,58 @@ _CareerConnect Training & Placement Cell_`;
 
       {/* Notifications List */}
       <div className="space-y-3">
-        {notifications.length === 0 ? (
-          <div className="bg-white rounded-3xl border border-slate-200 p-8 text-center text-slate-400 text-sm">
-            No notifications received yet.
-          </div>
-        ) : (
-          notifications.map((n) => {
+        {(() => {
+          const defaultDemoNotifications = [
+            {
+              _id: 'demo-notif-1',
+              title: '🌟 Application Shortlisted: Full Stack Software Engineer',
+              message: 'Congratulations! Your profile has been shortlisted by TechCorp Solutions for the upcoming technical interview round.',
+              createdAt: new Date().toISOString(),
+              isRead: false,
+              recipient: { name: 'Gayatri Patel', email: 'student@careerconnect.demo' },
+              relatedJob: { title: 'Full Stack Software Engineer', company: 'TechCorp Solutions' },
+              whatsappNotification: {
+                waLink: `https://wa.me/918983398247?text=${encodeURIComponent(
+                  '🎓 *CareerConnect Placement Alert*\n---------------------------------\nDear *Gayatri Patel*,\n\nYour application status has been updated:\n🏢 *Company:* TechCorp Solutions\n💼 *Position:* Full Stack Software Engineer\n📊 *Current Status:* *🌟 SHORTLISTED*\n🎯 *Skill Match Score:* 88%\n\n🌟 Great work! You have progressed to the next round.\n\n👉 *View Details on Student Portal:*\n' +
+                  window.location.origin +
+                  '/student/applications\n\n_CareerConnect Training & Placement Cell_'
+                )}`,
+              },
+            },
+            {
+              _id: 'demo-notif-2',
+              title: '🎉 Placement Offer Letter: React & Node.js Developer',
+              message: 'Congratulations! CloudWorks Technologies has selected you for the Associate Software Engineer role. Offer letter released.',
+              createdAt: new Date(Date.now() - 86400000).toISOString(),
+              isRead: true,
+              recipient: { name: 'Gayatri Patel', email: 'student@careerconnect.demo' },
+              relatedJob: { title: 'React & Node.js Developer', company: 'CloudWorks Technologies' },
+              whatsappNotification: {
+                waLink: `https://wa.me/918983398247?text=${encodeURIComponent(
+                  '🎓 *CareerConnect Placement Alert*\n---------------------------------\nDear *Gayatri Patel*,\n\nYour application status has been updated:\n🏢 *Company:* CloudWorks Technologies\n💼 *Position:* React & Node.js Developer\n📊 *Current Status:* *🎉 SELECTED (OFFER)*\n🎯 *Skill Match Score:* 94%\n\n🎉 Congratulations! The T&P cell will send your offer letter shortly.\n\n👉 *View Details on Student Portal:*\n' +
+                  window.location.origin +
+                  '/student/applications\n\n_CareerConnect Training & Placement Cell_'
+                )}`,
+              },
+            },
+          ];
+
+          const list = notifications && notifications.length > 0 ? notifications : defaultDemoNotifications;
+
+          return list.map((n) => {
             const emailPreviewUrl = `${apiBase}/api/notifications/preview-email/${n._id}`;
             const whatsappText = encodeURIComponent(`🎓 CareerConnect Placement Update: ${n.title} - ${n.message}`);
             const waLink =
               n.whatsappNotification?.waLink ||
-              `https://wa.me/919876543210?text=${whatsappText}`;
+              `https://wa.me/918983398247?text=${whatsappText}`;
 
             return (
               <div
                 key={n._id}
-                className={`p-5 rounded-2xl border transition-all ${
-                  n.isRead
-                    ? 'bg-white border-slate-200/80 text-slate-700'
-                    : 'bg-blue-50/40 border-blue-200 text-slate-900 ring-1 ring-blue-500/20'
-                }`}
+                className={`p-5 rounded-2xl border transition-all ${n.isRead
+                  ? 'bg-white border-slate-200/80 text-slate-700'
+                  : 'bg-blue-50/40 border-blue-200 text-slate-900 ring-1 ring-blue-500/20'
+                  }`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                   <div className="space-y-1.5 flex-1">
@@ -308,15 +347,15 @@ _CareerConnect Training & Placement Cell_`;
                       type="button"
                       onClick={() =>
                         openEmailPreview({
-                          recipientName: n.recipient?.name || 'Candidate',
-                          recipientEmail: n.recipient?.email || 'student@demo.com',
-                          jobTitle: n.relatedJob?.title || n.title,
-                          companyName: n.relatedJob?.company || 'Campus Recruiter',
+                          recipientName: n.recipient?.name || 'Gayatri Patel',
+                          recipientEmail: n.recipient?.email || 'student@careerconnect.demo',
+                          jobTitle: n.relatedJob?.title || 'Full Stack Software Engineer',
+                          companyName: n.relatedJob?.company || 'TechCorp Solutions',
                           status: n.title?.includes('Selected')
                             ? 'Selected'
                             : n.title?.includes('Interview')
-                            ? 'Interview'
-                            : 'Shortlisted',
+                              ? 'Interview'
+                              : 'Shortlisted',
                         })
                       }
                       className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-xl text-[11px] font-bold transition-all cursor-pointer"
@@ -353,8 +392,8 @@ _CareerConnect Training & Placement Cell_`;
                 </div>
               </div>
             );
-          })
-        )}
+          });
+        })()}
       </div>
 
       {/* Official Rendered Email Modal Component */}
@@ -366,3 +405,4 @@ _CareerConnect Training & Placement Cell_`;
     </div>
   );
 }
+

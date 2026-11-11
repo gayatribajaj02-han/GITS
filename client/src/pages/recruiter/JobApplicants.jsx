@@ -109,7 +109,7 @@ export default function JobApplicants() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {applicants.map((app) => {
-                  const studentPhone = app.studentProfile?.phone || '919876543210';
+                  const studentPhone = app.studentProfile?.phone || '918983398247';
                   const waText = encodeURIComponent(
                     `🎓 *CareerConnect Placement Alert*\nHello *${app.student?.name}*,\nYour application status for *${jobInfo?.title || 'Job'}* is currently *${app.status}*.\nCheck details: ${window.location.origin}/student/applications`
                   );
@@ -140,11 +140,10 @@ export default function JobApplicants() {
                       </td>
                       <td className="py-4">
                         <span
-                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-black ${
-                            app.matchScore >= 75
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-black ${app.matchScore >= 75
                               ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                               : 'bg-amber-50 text-amber-700 border border-amber-200'
-                          }`}
+                            }`}
                         >
                           <Sparkles className="w-3 h-3" /> {app.matchScore}% Match
                         </span>

@@ -1,5 +1,6 @@
 import React from 'react';
-import { X, Mail, ExternalLink, CheckCircle2, Building2, Calendar, Award } from 'lucide-react';
+import { X, Mail, ExternalLink, CheckCircle2 } from 'lucide-react';
+import { openEmailInNewTab } from '../../utils/emailTemplate';
 
 export default function EmailPreviewModal({ isOpen, onClose, data }) {
   if (!isOpen || !data) return null;
@@ -31,16 +32,26 @@ export default function EmailPreviewModal({ isOpen, onClose, data }) {
             <Mail className="w-4 h-4 text-blue-400" />
             <span>Official Email Preview • CareerConnect Dispatcher</span>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1 text-slate-400 hover:text-white rounded-lg hover:bg-slate-700 transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => openEmailInNewTab(data)}
+              className="inline-flex items-center gap-1 px-3 py-1 bg-blue-600/30 hover:bg-blue-600 text-blue-300 hover:text-white rounded-lg text-xs font-semibold transition-all cursor-pointer"
+              title="Open full email page in a new browser tab"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              <span>Open in New Tab</span>
+            </button>
+            <button
+              onClick={onClose}
+              className="p-1 text-slate-400 hover:text-white rounded-lg hover:bg-slate-700 transition-colors cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Email Header Simulation */}
-        <div className="px-6 py-3 bg-slate-850 border-b border-slate-800 text-xs space-y-1 font-mono text-slate-400">
+        <div className="px-6 py-3 bg-slate-800 border-b border-slate-700/80 text-xs space-y-1 font-mono text-slate-400">
           <div><span className="text-slate-500 font-bold">FROM:</span> CareerConnect Placement Cell &lt;placements@careerconnect.demo&gt;</div>
           <div><span className="text-slate-500 font-bold">TO:</span> {recipientName} &lt;{recipientEmail}&gt;</div>
           <div><span className="text-slate-500 font-bold">SUBJECT:</span> Placement Update: Application for "{jobTitle}" at {companyName} is now {status}</div>
@@ -118,12 +129,20 @@ export default function EmailPreviewModal({ isOpen, onClose, data }) {
             <CheckCircle2 className="w-3.5 h-3.5" />
             HTML Template Validated & Ready for Production
           </span>
-          <button
-            onClick={onClose}
-            className="px-4 py-1.5 bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold rounded-xl transition-colors"
-          >
-            Close Preview
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => openEmailInNewTab(data)}
+              className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer"
+            >
+              Open in New Tab
+            </button>
+            <button
+              onClick={onClose}
+              className="px-4 py-1.5 bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer"
+            >
+              Close
+            </button>
+          </div>
         </div>
       </div>
     </div>

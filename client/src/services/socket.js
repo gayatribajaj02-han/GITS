@@ -1,6 +1,9 @@
+
 import { io } from 'socket.io-client';
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+const SOCKET_URL =
+  import.meta.env.VITE_SOCKET_URL ||
+  'https://careerconnect-api-xciw.onrender.com';
 
 let socket = null;
 
@@ -12,10 +15,18 @@ export const initSocketClient = (userId) => {
     });
 
     socket.on('connect', () => {
-      console.log('⚡ Connected to CareerConnect WebSockets Server:', socket.id);
+      console.log(
+        '⚡ Connected to CareerConnect WebSockets Server:',
+        socket.id
+      );
+
       if (userId) {
         socket.emit('join_user_room', userId);
       }
+    });
+
+    socket.on('connect_error', (error) => {
+      console.error('WebSocket connection error:', error.message);
     });
 
     socket.on('disconnect', () => {
